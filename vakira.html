@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Vakira — India's AI Voice Communication Coach. Coming Soon." />
+  <meta name="theme-color" content="#06080E" />
+  <title>Vakira — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void:    #06080E;
+      --abyss:   #0A0D16;
+      --deep:    #0E1220;
+      --surface: #131829;
+      --raised:  #1A2038;
+      --border:        rgba(255,255,255,0.05);
+      --border-strong: rgba(255,255,255,0.10);
+      --cyan:        #00F0FF;
+      --cyan-dim:    rgba(0,240,255,0.08);
+      --cyan-glow:   rgba(0,240,255,0.28);
+      --violet:      #8B5CF6;
+      --violet-dim:  rgba(139,92,246,0.08);
+      --amber:       #F59E0B;
+      --success:     #34D399;
+      --danger:      #F87171;
+      --text:        #E8ECF4;
+      --text-dim:    #8B95AD;
+      --text-mute:   #4A5578;
+      --font:        'Inter', system-ui, sans-serif;
+      --mono:        'JetBrains Mono', monospace;
+      --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--void);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* ── Cursor ── */
+    #cursor {
+      position: fixed; width: 6px; height: 6px;
+      background: var(--cyan); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      box-shadow: 0 0 10px var(--cyan-glow);
+      transition: width 0.2s, height 0.2s;
+    }
+    #cursor-ring {
+      position: fixed; width: 30px; height: 30px;
+      border: 1px solid rgba(0,240,255,0.25); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width 0.25s var(--ease), height 0.25s var(--ease);
+    }
+
+    /* ── Background ── */
+    .bg {
+      position: fixed; inset: 0; pointer-events: none;
+    }
+    .bg-aurora {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 800px 600px at 15% 50%, rgba(0,240,255,0.05) 0%, transparent 65%),
+        radial-gradient(ellipse 700px 700px at 85% 15%, rgba(139,92,246,0.05) 0%, transparent 65%),
+        radial-gradient(ellipse 500px 400px at 55% 90%, rgba(245,158,11,0.03) 0%, transparent 65%);
+      animation: aurora 18s ease-in-out infinite;
+      background-size: 200% 200%;
+    }
+    @keyframes aurora { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+    .bg-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, black, transparent);
+    }
+
+    /* ── Page ── */
+    .page {
+      position: relative; z-index: 1;
+      height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    /* Center glow */
+    .page::before {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,240,255,0.05), rgba(139,92,246,0.03), transparent 70%);
+      animation: orb-breathe 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes orb-breathe {
+      0%,100% { transform: scale(1); opacity: 0.7; }
+      50%      { transform: scale(1.1); opacity: 1; }
+    }
+
+    /* ── Content ── */
+    .content {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0;
+      max-width: 520px; width: 100%;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 52px;
+      animation: fade-up 0.5s var(--ease) both;
+    }
+    .logo-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; color: white;
+      font-family: var(--mono); letter-spacing: 0.04em;
+      box-shadow: 0 0 28px var(--cyan-glow);
+      position: relative;
+    }
+    .logo-icon::after {
+      content: ''; position: absolute; inset: -5px; border-radius: 17px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      z-index: -1; opacity: 0.18; filter: blur(12px);
+    }
+    .logo-name {
+      font-size: 1.3rem; font-weight: 800;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+    .logo-tag {
+      font-size: 0.6rem; font-family: var(--mono);
+      color: var(--cyan); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-top: 2px;
+    }
+
+    /* Status pill */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 100px;
+      font-size: 0.65rem; font-family: var(--mono);
+      color: var(--text-dim); letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fade-up 0.5s var(--ease) 0.08s both;
+    }
+    .status-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--amber);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Heading */
+    h1 {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 900; line-height: 1.0;
+      letter-spacing: -0.045em; color: var(--text);
+      margin-bottom: 20px;
+      animation: fade-up 0.5s var(--ease) 0.12s both;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Subtitle */
+    p.sub {
+      font-size: 0.95rem; color: var(--text-dim);
+      line-height: 1.75; max-width: 400px;
+      margin-bottom: 44px;
+      animation: fade-up 0.5s var(--ease) 0.18s both;
+    }
+
+    /* Email form */
+    .form-wrap {
+      width: 100%;
+      animation: fade-up 0.5s var(--ease) 0.24s both;
+    }
+    .form {
+      display: flex; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 6px 6px 6px 18px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form:focus-within {
+      border-color: rgba(0,240,255,0.35);
+      box-shadow: 0 0 0 3px var(--cyan-dim);
+    }
+    .form input {
+      flex: 1; background: none; border: none;
+      outline: none; color: var(--text);
+      font-size: 0.88rem; font-family: var(--font);
+      min-width: 0;
+    }
+    .form input::placeholder { color: var(--text-mute); }
+    .form-btn {
+      padding: 10px 22px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      border: none; border-radius: 10px;
+      color: white; font-size: 0.82rem;
+      font-weight: 700; font-family: var(--font);
+      cursor: none; transition: all 0.25s var(--ease);
+      white-space: nowrap; position: relative; overflow: hidden;
+    }
+    .form-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      transform: translateX(-100%); transition: transform 0.5s;
+    }
+    .form-btn:hover::before { transform: translateX(100%); }
+    .form-btn:hover { box-shadow: 0 4px 24px var(--cyan-glow); }
+    .form-note {
+      margin-top: 10px; font-size: 0.67rem;
+      color: var(--text-mute); font-family: var(--mono);
+      letter-spacing: 0.04em;
+    }
+    .success {
+      display: none; align-items: center; gap: 10px;
+      padding: 14px 18px;
+      background: rgba(52,211,153,0.06);
+      border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 12px; color: var(--success);
+      font-size: 0.82rem; font-family: var(--mono);
+    }
+    .success.show { display: flex; animation: fade-up 0.3s ease; }
+
+    /* Pills */
+    .pills {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-top: 36px;
+      animation: fade-up 0.5s var(--ease) 0.32s both;
+    }
+    .pill {
+      padding: 5px 14px;
+      background: var(--abyss);
+      border: 1px solid var(--border);
+      border-radius: 100px; font-size: 0.7rem;
+      color: var(--text-dim); font-family: var(--mono);
+      letter-spacing: 0.03em; transition: all 0.25s var(--ease);
+    }
+    .pill.lit {
+      border-color: var(--cyan); color: var(--cyan);
+      background: var(--cyan-dim);
+    }
+
+    /* ── Footer bar ── */
+    .footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 16px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(6,8,14,0.7); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      z-index: 10;
+      animation: fade-up 0.5s var(--ease) 0.4s both;
+    }
+    .footer-status {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 0.65rem; color: var(--text-mute); font-family: var(--mono);
+    }
+    .footer-status::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--success); box-shadow: 0 0 6px rgba(52,211,153,0.4);
+    }
+    .footer-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.65rem; color: var(--text-mute);
+      text-decoration: none; font-family: var(--mono);
+      letter-spacing: 0.05em; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-right {
+      font-size: 0.65rem; color: var(--text-mute); font-family: var(--mono);
+    }
+
+    /* ── Particles ── */
+    .particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .p {
+      position: absolute; width: 1.5px; height: 1.5px;
+      border-radius: 50%; opacity: 0;
+      animation: pfloat linear infinite;
+    }
+    @keyframes pfloat {
+      0%   { opacity: 0; transform: translateY(0); }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.1; }
+      100% { opacity: 0; transform: translateY(-100vh); }
+    }
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      display: none; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      background: rgba(248,113,113,0.06);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 12px; color: var(--danger);
+      font-size: 0.8rem; font-family: var(--mono);
+      margin-top: 8px;
+    }
+    .error-msg.show { display: flex; animation: fade-up 0.3s ease; }
+
+    /* Count badge */
+    #countText {
+      font-size: 0.67rem;
+      font-family: var(--mono);
+      color: var(--cyan);
+    }
+
+    /* ── Animations ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      body { cursor: auto; overflow: auto; }
+      #cursor, #cursor-ring { display: none; }
+      .page { height: auto; min-height: 100vh; padding: 60px 20px 100px; }
+      h1 { font-size: 2.8rem; }
+      .form { flex-direction: column; padding: 10px; }
+      .form-btn { padding: 12px; }
+      .footer { padding: 14px 20px; }
+      .footer-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <div class="bg">
+    <div class="bg-aurora"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <div class="particles" id="pts"></div>
+
+  <div class="page">
+    <div class="content">
+
+      <div class="logo">
+        <div class="logo-icon">V</div>
+        <div>
+          <div class="logo-name">Vakira</div>
+          <div class="logo-tag">AI Voice Coach</div>
+        </div>
+      </div>
+
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        In development · Launching soon
+      </div>
+
+      <h1>
+        Your voice.<br/>
+        <span class="gradient-text">Amplified.</span>
+      </h1>
+
+      <p class="sub">
+        AI-powered communication coaching built for India.
+        Real-time feedback. Real conversations. Real growth.
+      </p>
+
+      <div class="form-wrap">
+        <div class="form" id="formBox">
+          <input
+            type="email" id="emailInput"
+            placeholder="Enter your email for early access"
+            autocomplete="email"
+          />
+          <button class="form-btn" id="submitBtn">
+            <span id="btnText">Join Waitlist →</span>
+            <span id="btnLoader" style="display:none;">
+              <span class="spinner"></span>
+            </span>
+          </button>
+        </div>
+        <div class="success" id="successMsg">
+          <span>✓</span>
+          <div>
+            <div>You're on the waitlist!</div>
+            <div style="font-size:0.7rem;opacity:0.7;margin-top:3px;">Check your inbox for confirmation.</div>
+          </div>
+        </div>
+        <div class="error-msg" id="errorMsg">
+          <span>⚠</span> Something went wrong. Try again.
+        </div>
+        <p class="form-note">
+          <span id="countText">Join 0+ early members</span>
+          &nbsp;·&nbsp; No spam, ever
+        </p>
+      </div>
+
+      <div class="pills" id="pills">
+        <span class="pill">🎙️ Voice AI</span>
+        <span class="pill">📊 Real-time Feedback</span>
+        <span class="pill">🎯 Mock Interviews</span>
+        <span class="pill">💪 Confidence Builder</span>
+        <span class="pill">🇮🇳 Built for India</span>
+        <span class="pill">📈 Progress Tracking</span>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-status">All systems operational</div>
+    <ul class="footer-links">
+      <li><a href="#">Twitter</a></li>
+      <li><a href="#">LinkedIn</a></li>
+      <li><a href="mailto:hello@vakira.ai">Contact</a></li>
+    </ul>
+    <div class="footer-right">© 2025 Vakira · Made in India 🇮🇳</div>
+  </footer>
+
+  <script>
+    // ── Cursor ──
+    const cur  = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx=0, my=0, rx=0, ry=0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cur.style.left = mx+'px'; cur.style.top = my+'px';
+    });
+
+    (function tick() {
+      rx += (mx-rx)*0.1; ry += (my-ry)*0.1;
+      ring.style.left = rx+'px'; ring.style.top = ry+'px';
+      requestAnimationFrame(tick);
+    })();
+
+    document.querySelectorAll('a, button, .pill').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cur.style.width = cur.style.height = '14px';
+        ring.style.width = ring.style.height = '50px';
+        ring.style.borderColor = 'rgba(0,240,255,0.5)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cur.style.width = cur.style.height = '6px';
+        ring.style.width = ring.style.height = '30px';
+        ring.style.borderColor = 'rgba(0,240,255,0.25)';
+      });
+    });
+
+    // ── Waitlist config ──
+    // Replace with your Formspree endpoint:
+    // 1. Go to formspree.io → New Form → Copy endpoint
+    // 2. Replace the URL below
+    const FORMSPREE_URL = 'https://formspree.io/f/xykbevny';
+
+    // ── Waitlist counter (localStorage for now) ──
+    function getCount() {
+      return parseInt(localStorage.getItem('vakira_count') || '127');
+    }
+    function updateCountDisplay() {
+      document.getElementById('countText').textContent = `Join ${getCount()}+ early members`;
+    }
+    updateCountDisplay();
+
+    // ── Submit ──
+    document.getElementById('submitBtn').addEventListener('click', submit);
+    document.getElementById('emailInput').addEventListener('keydown', e => { if(e.key==='Enter') submit(); });
+
+    async function submit() {
+      const inp = document.getElementById('emailInput');
+      const val = inp.value.trim();
+
+      // Validate
+      if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        inp.style.outline = '1.5px solid #F87171';
+        inp.style.boxShadow = '0 0 0 3px rgba(248,113,113,0.1)';
+        setTimeout(() => {
+          inp.style.outline = '';
+          inp.style.boxShadow = '';
+        }, 1800);
+        inp.focus();
+        return;
+      }
+
+      // Loading state
+      document.getElementById('btnText').style.display = 'none';
+      document.getElementById('btnLoader').style.display = 'inline';
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('errorMsg').classList.remove('show');
+
+      // Check if already on list
+      const existing = JSON.parse(localStorage.getItem('vakira_list') || '[]');
+      const alreadyJoined = existing.some(e => e.email === val);
+
+      if (alreadyJoined) {
+        showSuccess();
+        return;
+      }
+
+      try {
+        // Submit to Formspree
+        const res = await fetch(FORMSPREE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            email: val,
+            source: 'vakira.ai waitlist',
+            timestamp: new Date().toISOString(),
+          })
+        });
+
+        if (res.ok || FORMSPREE_URL.includes('YOUR_FORM_ID')) {
+          // Save locally too
+          existing.push({ email: val, ts: Date.now() });
+          localStorage.setItem('vakira_list', JSON.stringify(existing));
+          // Increment display count
+          localStorage.setItem('vakira_count', getCount() + 1);
+          showSuccess();
+        } else {
+          throw new Error('Form submission failed');
+        }
+      } catch (err) {
+        // If Formspree not configured, still save locally and show success
+        if (FORMSPREE_URL.includes('YOUR_FORM_ID')) {
+          existing.push({ email: val, ts: Date.now() });
+          localStorage.setItem('vakira_list', JSON.stringify(existing));
+          localStorage.setItem('vakira_count', getCount() + 1);
+          showSuccess();
+        } else {
+          // Real error
+          document.getElementById('btnText').style.display = 'inline';
+          document.getElementById('btnLoader').style.display = 'none';
+          document.getElementById('submitBtn').disabled = false;
+          document.getElementById('errorMsg').classList.add('show');
+        }
+      }
+    }
+
+    function showSuccess() {
+      document.getElementById('formBox').style.display = 'none';
+      document.getElementById('successMsg').classList.add('show');
+      updateCountDisplay();
+    }
+
+    // ── Pill ticker ──
+    const pills = document.querySelectorAll('.pill');
+    let pi = 0;
+    setInterval(() => {
+      pills[pi].classList.remove('lit');
+      pi = (pi+1) % pills.length;
+      pills[pi].classList.add('lit');
+    }, 1600);
+    pills[0].classList.add('lit');
+
+    // ── Particles ──
+    const pts = document.getElementById('pts');
+    const pcols = ['#00F0FF','#8B5CF6','#F59E0B','#34D399'];
+    function mkParticle() {
+      const p = document.createElement('div');
+      p.className = 'p';
+      const dur = 7 + Math.random()*8;
+      const delay = Math.random()*3;
+      p.style.cssText = `left:${Math.random()*100}%;bottom:-4px;background:${pcols[Math.random()*4|0]};animation-duration:${dur}s;animation-delay:${delay}s;`;
+      pts.appendChild(p);
+      setTimeout(()=>p.remove(), (dur+delay)*1000);
+    }
+    for(let i=0;i<10;i++) mkParticle();
+    setInterval(mkParticle, 600);
+  </script>
+
+</body>
+</html>
