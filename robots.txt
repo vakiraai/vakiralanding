@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /ws/
+
+# Landing page — fully indexable
+Allow: /$
+
+# Sitemap
+Sitemap: https://voices.vakira.ai/sitemap.xml
+
+# LLM context
+# https://voices.vakira.ai/llm.txt
