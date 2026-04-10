@@ -643,7 +643,7 @@
     </p>
 
     <div class="hero-ctas">
-      <button onclick="document.getElementById('try-me-modal').style.display='flex'" style="display:inline-block;background:transparent;border:2px solid rgba(0,240,255,0.5);color:#00F0FF;padding:14px 28px;border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;margin-right:12px;transition:all .2s" onmouseover="this.style.background='rgba(0,240,255,0.1)'" onmouseout="this.style.background='transparent'">
+      <button onclick="document.getElementById('try-me-modal').style.display='flex'; setTimeout(function(){if(typeof vmTapMic!=='undefined'&&(!window._vmWs||window._vmWs.readyState!==1)){var ws=new WebSocket('wss://voices.vakira.ai/ws/guide?guest=true');window._vmWs=ws;ws.onmessage=function(e){var d=JSON.parse(e.data);if(d.status==='guide_message'){document.getElementById('vm-ai-text').textContent=d.text||'';if(d.audio){var bytes=Uint8Array.from(atob(d.audio),function(c){return c.charCodeAt(0)});var mime=bytes[0]===82?'audio/wav':'audio/mpeg';var url=URL.createObjectURL(new Blob([bytes],{type:mime}));new Audio(url).play();}}};};},400);" style="display:inline-block;background:transparent;border:2px solid rgba(0,240,255,0.5);color:#00F0FF;padding:14px 28px;border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;margin-right:12px;transition:all .2s" onmouseover="this.style.background='rgba(0,240,255,0.1)'" onmouseout="this.style.background='transparent'">
         🎙 Try Me — Speak Now
       </button>
       <a href="https://voices.vakira.ai/register" class="cta-main">Start for Free — No Card Needed →</a>
@@ -924,26 +924,169 @@ setInterval(mkP,600);
 </script>
 
 </div><!-- end overflow wrapper -->
-<!-- Try Me Modal -->
+<!-- Try Me Modal — Vanilla JS Voice Demo -->
 <div id="try-me-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;padding:20px">
-  <div style="background:#0d1018;border:1px solid rgba(0,240,255,0.3);border-radius:24px;width:100%;max-width:480px;overflow:hidden">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06)">
-      <span style="color:#00F0FF;font-weight:700;font-size:15px">● vakira.AI</span>
-      <span style="color:rgba(255,255,255,0.3);font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:.08em">Live Demo</span>
-      <button onclick="document.getElementById('try-me-modal').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;padding:4px 8px">✕</button>
+  <div style="background:#0d1018;border:1px solid rgba(0,240,255,0.3);border-radius:24px;width:100%;max-width:420px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span style="color:#00F0FF;font-weight:700;font-size:14px;letter-spacing:.04em">● vakira.AI</span>
+      <span id="vm-phase" style="color:rgba(255,255,255,0.25);font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:.08em">Demo</span>
+      <button onclick="vmClose()" style="background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;padding:4px 8px">✕</button>
     </div>
-    <div style="padding:24px 20px;text-align:center">
-      <div style="font-size:56px;margin-bottom:16px">🎙</div>
-      <h3 style="color:#e8eaf0;margin:0 0 12px;font-size:20px">Talk to Vakira AI</h3>
-      <p style="color:#8B95AD;font-size:14px;line-height:1.7;margin:0 0 24px">
-        Click the button below, speak in English — Vakira will respond, correct you, and coach you in real time.
-      </p>
-      <a href="https://voices.vakira.ai/register" style="display:inline-block;background:#00F0FF;color:#06080E;padding:14px 32px;border-radius:12px;font-weight:700;text-decoration:none;font-size:15px;margin-bottom:12px">
-        🚀 Start Free — No Login Needed
-      </a>
-      <p style="color:rgba(255,255,255,0.2);font-size:11px;margin:0">Full voice coaching experience inside the app</p>
+
+    <!-- AI message -->
+    <div style="padding:20px 18px 8px">
+      <div style="background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.12);border-radius:14px;padding:14px">
+        <!-- Wave bars -->
+        <div id="vm-wave" style="display:flex;align-items:center;gap:3px;height:18px;margin-bottom:8px">
+          <div class="vm-bar"></div><div class="vm-bar"></div><div class="vm-bar"></div><div class="vm-bar"></div><div class="vm-bar"></div>
+        </div>
+        <p id="vm-ai-text" style="color:#e8eaf0;font-size:14px;line-height:1.7;margin:0">Connecting...</p>
+      </div>
+
+      <!-- User bubble -->
+      <div id="vm-user-bubble" style="display:none;margin-top:10px;text-align:right">
+        <span id="vm-user-text" style="display:inline-block;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:8px 14px;color:#c4b5fd;font-size:13px;max-width:80%;text-align:left"></span>
+      </div>
+
+      <!-- Signup prompt -->
+      <div id="vm-signup" style="display:none;margin-top:14px;background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.2);border-radius:14px;padding:18px;text-align:center">
+        <p style="color:#e8eaf0;font-size:14px;margin:0 0 14px;line-height:1.6">You just fixed real errors in 60 seconds.<br>Sign up free to continue coaching.</p>
+        <a href="https://voices.vakira.ai/register" style="display:inline-block;background:#00F0FF;color:#06080E;padding:12px 28px;border-radius:10px;font-weight:700;text-decoration:none;font-size:14px">
+          🚀 Start Free — Continue Inside
+        </a>
+      </div>
+    </div>
+
+    <!-- Mic button -->
+    <div id="vm-footer" style="padding:14px 18px 18px;text-align:center">
+      <button id="vm-mic-btn" onclick="vmTapMic()" style="padding:11px 28px;border-radius:999px;border:none;background:#00F0FF;color:#06080E;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s">
+        🎙 Tap to Speak
+      </button>
+      <p id="vm-hint" style="font-size:11px;color:rgba(255,255,255,0.25);margin:8px 0 0;font-family:monospace">Tap mic and speak naturally</p>
     </div>
   </div>
 </div>
+
+<style>
+.vm-bar { width:3px;height:6px;background:#00F0FF;border-radius:2px;opacity:.4;transition:height .15s; }
+.vm-bar.active { animation:vm-wave .7s ease-in-out infinite; opacity:1; }
+.vm-bar:nth-child(2){animation-delay:.1s}.vm-bar:nth-child(3){animation-delay:.2s}.vm-bar:nth-child(4){animation-delay:.1s}.vm-bar:nth-child(5){animation-delay:.05s}
+@keyframes vm-wave{0%,100%{height:5px}50%{height:18px}}
+</style>
+
+<script>
+(function(){
+  const WS_URL = 'wss://voices.vakira.ai/ws/guide?guest=true';
+  let ws, mediaRec, chunks=[], audioQueue=[], isPlaying=false, msgCount=0;
+
+  function $(id){ return document.getElementById(id); }
+
+  function setStatus(s){
+    const btn = $('vm-mic-btn'), hint = $('vm-hint');
+    const bars = document.querySelectorAll('.vm-bar');
+    if(s==='listening'){
+      btn.textContent='⏹ Stop'; btn.style.background='#ef4444'; btn.style.color='#fff';
+      hint.textContent='Listening... tap to stop';
+      bars.forEach(b=>b.classList.remove('active'));
+    } else if(s==='speaking'){
+      btn.textContent='▶ AI Speaking...'; btn.style.background='rgba(255,255,255,.1)'; btn.style.color='#e8eaf0';
+      hint.textContent='AI is speaking...';
+      bars.forEach(b=>b.classList.add('active'));
+    } else if(s==='thinking'){
+      btn.textContent='✦ Processing...'; btn.style.background='rgba(139,92,246,.3)'; btn.style.color='#c4b5fd';
+      hint.textContent='Analysing your speech...';
+    } else {
+      btn.textContent='🎙 Tap to Speak'; btn.style.background='#00F0FF'; btn.style.color='#06080E';
+      hint.textContent='Tap mic and speak naturally';
+      bars.forEach(b=>b.classList.remove('active'));
+    }
+  }
+
+  function playNext(){
+    if(!audioQueue.length){ isPlaying=false; setStatus('idle'); return; }
+    isPlaying=true; setStatus('speaking');
+    const b64=audioQueue.shift();
+    try{
+      const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+      const mime=bytes[0]===82?'audio/wav':'audio/mpeg';
+      const url=URL.createObjectURL(new Blob([bytes],{type:mime}));
+      const a=new Audio(url); a.play().catch(()=>playNext());
+      a.onended=()=>{ URL.revokeObjectURL(url); playNext(); };
+    }catch(e){ playNext(); }
+  }
+
+  function enqueue(b64){ if(!b64)return; audioQueue.push(b64); if(!isPlaying)playNext(); }
+
+  function connect(){
+    ws=new WebSocket(WS_URL);
+    ws.onmessage=function(e){
+      const d=JSON.parse(e.data);
+      if(d.status==='guide_message'){
+        $('vm-ai-text').textContent=d.text||'';
+        if(d.phase) $('vm-phase').textContent=d.phase.replace('_',' ');
+        if(d.audio) enqueue(d.audio);
+        else setStatus('idle');
+        if(d.show_signup){
+          $('vm-footer').style.display='none';
+          $('vm-signup').style.display='block';
+        }
+      }
+    };
+    ws.onerror=ws.onclose=function(){ setStatus('idle'); };
+  }
+
+  async function startMic(){
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      chunks=[];
+      const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';
+      mediaRec=new MediaRecorder(stream,{mimeType:mime});
+      mediaRec.ondataavailable=e=>{ if(e.data.size>0)chunks.push(e.data); };
+      mediaRec.onstop=async function(){
+        stream.getTracks().forEach(t=>t.stop()); mediaRec=null;
+        if(!chunks.length)return;
+        setStatus('thinking');
+        const blob=new Blob(chunks,{type:mime});
+        const buf=await blob.arrayBuffer();
+        const b64=btoa(String.fromCharCode(...new Uint8Array(buf)));
+        const ub=$('vm-user-bubble'), ut=$('vm-user-text');
+        ub.style.display='block'; ut.textContent='...';
+        ws&&ws.readyState===1&&ws.send(JSON.stringify({type:'audio',data:b64}));
+        setTimeout(()=>{ if($('vm-hint').textContent==='Analysing your speech...')setStatus('idle'); },10000);
+        msgCount++;
+      };
+      mediaRec.start(); setStatus('listening');
+      setTimeout(()=>{ if(mediaRec&&mediaRec.state==='recording')mediaRec.stop(); },8000);
+    }catch(e){ alert('Microphone access needed to try the demo!'); }
+  }
+
+  window.vmTapMic=function(){
+    if(!ws||ws.readyState!==1){ connect(); setTimeout(vmTapMic,1000); return; }
+    if(mediaRec&&mediaRec.state==='recording'){ mediaRec.stop(); return; }
+    if(isPlaying){ audioQueue=[]; isPlaying=false; }
+    startMic();
+  };
+
+  window.vmClose=function(){
+    $('try-me-modal').style.display='none';
+    if(ws)ws.close(); ws=null;
+    if(mediaRec&&mediaRec.state==='recording')mediaRec.stop();
+    audioQueue=[]; isPlaying=false; msgCount=0;
+    $('vm-ai-text').textContent='Connecting...';
+    $('vm-user-bubble').style.display='none';
+    $('vm-signup').style.display='none';
+    $('vm-footer').style.display='block';
+    setStatus('idle');
+  };
+
+  // Auto-connect when modal opens
+  document.querySelector('[onclick*="try-me-modal"]')&&
+  document.querySelector('[onclick*="try-me-modal"]').addEventListener('click',function(){
+    setTimeout(connect,300);
+  });
+})();
+</script>
 </body>
 </html>
