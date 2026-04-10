@@ -560,7 +560,22 @@
   animation: none;
   animation: vk-grow .5s cubic-bezier(.22,.68,0,1.2) both;
 }
-</style>
+
+    .hero-btn-try {
+      display: inline-block;
+      background: transparent;
+      border: 2px solid rgba(0,240,255,0.5);
+      color: #00F0FF;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-right: 12px;
+      transition: all .2s;
+    }
+    .hero-btn-try:hover { background: rgba(0,240,255,0.08); }
+  </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TW72HPJRYW"></script>
   <script>
@@ -627,6 +642,9 @@
     </p>
 
     <div class="hero-ctas">
+      <button onclick="document.getElementById('try-me-modal').style.display='flex'" style="display:inline-block;background:transparent;border:2px solid rgba(0,240,255,0.5);color:#00F0FF;padding:14px 28px;border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;margin-right:12px;transition:all .2s" onmouseover="this.style.background='rgba(0,240,255,0.1)'" onmouseout="this.style.background='transparent'">
+        🎙 Try Me — Speak Now
+      </button>
       <a href="https://voices.vakira.ai/register" class="cta-main">Start for Free — No Card Needed →</a>
       <a href="#how" class="cta-ghost">See how it works</a>
     </div>
@@ -819,7 +837,7 @@
     <div class="pricing-badge">Coming Soon</div>
     <h3>Pricing plans launching shortly</h3>
     <p>We're finalising plans designed to be accessible to every Indian professional and student. Early users get the best rates — guaranteed.</p>
-    <a href="/cdn-cgi/l/email-protection#2a5c4b4143584b6a5c4b4143584b044b43" class="pricing-cta">Get early access → <span class="__cf_email__" data-cfemail="4630272d2f34270630272d2f342768272f">[email&#160;protected]</span></a>
+    <a href="mailto:vakira@vakira.ai" class="pricing-cta">Get early access → vakira@vakira.ai</a>
   </div>
 </section>
 
@@ -859,14 +877,14 @@
     </svg>
   </div>
   <ul class="footer-links">
-    <li><a href="/cdn-cgi/l/email-protection#cbbdaaa0a2b9aa8bbdaaa0a2b9aae5aaa2">Contact</a></li>
+    <li><a href="mailto:vakira@vakira.ai">Contact</a></li>
     <li><a href="https://voices.vakira.ai/login">App</a></li>
     <li><a href="https://voices.vakira.ai/register">Sign Up Free</a></li>
   </ul>
   <div class="footer-copy">© 2025 Vakira.AI · Made in India</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 /* ── CURSOR ── */
 const cur=document.getElementById('cursor'), ring=document.getElementById('cursor-ring');
 let mx=0,my=0,rx=0,ry=0;
@@ -896,4 +914,34 @@ const pcols=['#00F0FF','#8B5CF6','#F59E0B','#34D399'];
 function mkP(){
   const p=document.createElement('div'); p.className='p';
   const dur=7+Math.random()*8, delay=Math.random()*3;
-  p.style.cssText=`left:$
+  p.style.cssText=`left:${Math.random()*100}%;bottom:-4px;background:${pcols[Math.random()*4|0]};animation-duration:${dur}s;animation-delay:${delay}s;`;
+  pts.appendChild(p);
+  setTimeout(()=>p.remove(),(dur+delay)*1000);
+}
+for(let i=0;i<12;i++) mkP();
+setInterval(mkP,600);
+</script>
+
+<!-- Try Me Modal -->
+<div id="try-me-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#0d1018;border:1px solid rgba(0,240,255,0.3);border-radius:24px;width:100%;max-width:480px;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span style="color:#00F0FF;font-weight:700;font-size:15px">● vakira.AI</span>
+      <span style="color:rgba(255,255,255,0.3);font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:.08em">Live Demo</span>
+      <button onclick="document.getElementById('try-me-modal').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;padding:4px 8px">✕</button>
+    </div>
+    <div style="padding:24px 20px;text-align:center">
+      <div style="font-size:56px;margin-bottom:16px">🎙</div>
+      <h3 style="color:#e8eaf0;margin:0 0 12px;font-size:20px">Talk to Vakira AI</h3>
+      <p style="color:#8B95AD;font-size:14px;line-height:1.7;margin:0 0 24px">
+        Click the button below, speak in English — Vakira will respond, correct you, and coach you in real time.
+      </p>
+      <a href="https://voices.vakira.ai/register" style="display:inline-block;background:#00F0FF;color:#06080E;padding:14px 32px;border-radius:12px;font-weight:700;text-decoration:none;font-size:15px;margin-bottom:12px">
+        🚀 Start Free — No Login Needed
+      </a>
+      <p style="color:rgba(255,255,255,0.2);font-size:11px;margin:0">Full voice coaching experience inside the app</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
